@@ -19,7 +19,6 @@ def viterbiTokenize(line, scoreDict, maxLength, mode='min'):
                 node.score=score
                 node.token=token
         nodes.append(node)
-        print(node.score, node.token)
 
     # backward
     tokens = []
