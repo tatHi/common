@@ -16,9 +16,9 @@ def viterbiTokenize(line, scoreDict, maxLength, mode='min'):
             token = line[i-l:i+1]
             
             prevScore = nodes[i-l-1].score if 0<=i-l-1 else 0
-            score = prevScore+scoreDict[token] if token in scoreDict else prevScore
+            currentScore = scoreDict[token] if token in scoreDict else (val if mode=='min' else -val)
+            score = prevScore + currentScore
             
-            # score = scoreDict[token] if token in scoreDict else (val if mode=='min' else -val)
             if (mode=='min' and score<node.score) or (mode=='max' and node.score<score):
                 node.score=score
                 node.token=token
