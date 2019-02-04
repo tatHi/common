@@ -13,5 +13,5 @@ setup(
         'Development Status :: 1 - Planning',
     ],
     keywords='common',
-    install_requires=['mecab-python3']
+    install_requires=['mecab-python3','numpy']
 )

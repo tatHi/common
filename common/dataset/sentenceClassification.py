@@ -1,6 +1,16 @@
-import dataset
+from common.dataset import dataset
 class Dataset4SentenceClassification(dataset.Dataset):
-    def __init__(self, textPathes, labelPathes, split=True):
-        super().__init__(textPathes,split)
-        self.labels = [[line.strip() for line in open(path)] for path in labelPathes]
+    def __init__(self, path):
+        super().__init__(path)
+        self.labels = []
+        self.labelSize = None
+        self.__setLabelInfo()
 
+    def __setLabelInfo(self):
+        labels = set()
+        for ty in self.data:
+            for line in self.data[ty]:
+                labels.add(line['label'])
+        self.labels = sorted(list(labels))
+        self.labelSize = len(labels)
+        

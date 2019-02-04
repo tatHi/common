@@ -15,9 +15,11 @@ def makeTokenizedFile(filePath):
     print('output file:', resultPath)
     
     tagger = MeCab.Tagger('-Owakati')
-    segedData = [tagger.parse(line) for line in open(filePath)]
-    
+    data = [line.strip() for line in open(filePath)]
+    segedData = [tagger.parse(line).strip() for line in data]
+
     with open(resultPath,'w') as f:
         for line in segedData:
-            f.write(line)
+            f.write(line+'\n')
     print('done')
+
