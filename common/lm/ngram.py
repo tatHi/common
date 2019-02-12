@@ -1,9 +1,10 @@
 import numpy as np
 class NgramLM:
-    def __init__(self, n):
+    def __init__(self, n, useMgram=True):
         # data is list of list
         self.n = n
-        if n>=2:
+        self.useMgram = useMgram # set n-1 gram automatically or not
+        if n>=2 and self.useMgram:
             self.mgramLM = NgramLM(n-1) # m=n-1
         
         self.ngramCountDict = {}
@@ -36,7 +37,7 @@ class NgramLM:
             else:
                 ngram = tuple(line[i:i+self.n])
             self.addNgram(ngram)
-        if self.n>=2:
+        if self.n>=2 and self.useMgram:
             self.mgramLM.addLine(line)
 
     def reduceLine(self, line):
@@ -48,7 +49,7 @@ class NgramLM:
             else:
                 ngram = tuple(line[i:i+self.n])
             self.reduceNgram(ngram)
-        if self.n>=2:
+        if self.n>=2 and self.useMgram:
             self.mgramLM.reduceLline(line)
 
     def getCount(self, ngram):
@@ -57,8 +58,9 @@ class NgramLM:
         return self.ngramCountDict[ngram] if ngram in self.ngramCountDict else 0
 
     def getNgramProb(self, ngram):
+        assert self.n==1 or (self.n>=2 and self.useMgram), 'build LM with useMgram=True to get ngram probability'
         if self.n==1:
-            return self.ngramCountDict[ngram]/self.numOfNgram
+            return self.getCount(ngram)/self.numOfNgram
         else:
             if self.n==2:
                 mgram = ngram[0]
@@ -67,6 +69,7 @@ class NgramLM:
             return self.getCount(ngram)/self.mgramLM.getCount(mgram)
 
     def getLineProb(self, line):
+        assert self.n==1 or (self.n>=2 and self.useMgram), 'build LM with useMgram=True to get ngram probability'
         if self.n==1:
             p = np.prod([self.getNgramProb(ngram) for ngram in line])
         else:
