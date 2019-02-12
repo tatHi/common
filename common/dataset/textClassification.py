@@ -1,5 +1,5 @@
 from common.dataset import dataset
-class Dataset4SentenceClassification(dataset.Dataset):
+class Dataset4TextClassification(dataset.Dataset):
     def __init__(self, path):
         super().__init__(path)
         self.labels = []
