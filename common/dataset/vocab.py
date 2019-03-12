@@ -1,13 +1,13 @@
 class Vocabulary:
-    def __init__(self, data):
+    def __init__(self, data, useBEOS):
         self.word2idDict = {}
         self.id2wordDict = {}
         self.wordCountDict = {}
         self.wordNum = 0
 
-        self.__buildVocabulary(data) # dataset.Dataset.data['train']
+        self.__buildVocabulary(data, useBEOS) # dataset.Dataset.data['train']
 
-    def __buildVocabulary(self, data):
+    def __buildVocabulary(self, data, useBEOS):
         # count
         for line in data:
             text = line['text']
@@ -21,6 +21,12 @@ class Vocabulary:
         # UNK
         self.wordCountDict['<UNK>'] = 1
         self.wordNum += 1
+
+        # BOS, EOS
+        if useBEOS:
+            for w in ['<BOS>','<EOS>']:
+                self.wordCountDict[w] = len(data)
+                self.wordNum += len(data)
 
         # indexing
         for word, num in sorted(self.wordCountDict.items(), key=lambda x:x[1])[::-1]:

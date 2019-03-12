@@ -53,6 +53,8 @@ class NgramLM:
             self.mgramLM.reduceLline(line)
 
     def getCount(self, ngram):
+        if len(ngram)==1 and (type(ngram)==list or type(ngram)==tuple):
+            ngram = ngram[0]
         if self.n >= 2:
             ngram = tuple(ngram)
         return self.ngramCountDict[ngram] if ngram in self.ngramCountDict else 0
