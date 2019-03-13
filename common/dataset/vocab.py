@@ -33,6 +33,9 @@ class Vocabulary:
             self.word2idDict[word] = len(self.word2idDict)
             self.id2wordDict[self.word2idDict[word]] = word
 
+        # vocab size
+        self.vocabSize = len(self.word2idDict)
+
     def word2id(self, word):
         if word in self.word2idDict:
             return self.word2idDict[word]
