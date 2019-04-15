@@ -15,18 +15,36 @@ class Dataset4TextClassification(dataset.Dataset):
         self.labelSize = len(labels)
 
 def convertSentLabelFiles(sentDataPath, labelDataPath, outPath):
+    import os
+    import json
     # convert 2 files (sentences.txt and labels.txt) into dataset-formatted file.json
 
-    if '%s' is not in sentDataPath and '%s' is not in labelDataPath:
-        print('error:')
+    if '%s' not in sentDataPath and '%s' not in labelDataPath:
+        print('error: there is no %s expression to embed train/(valid)/test.')
+        print('the path must be like \"hoge_%s_text/label.txt\"')
 
-    sentData = [line.strip() for line in open(sentDataPath)]
-    labelData = [line.strip() for line in open(labelDataPath)]
+    data = {}
 
-    if len(sentData) != len(labelData):        
-        print('sizes of sentences and labels must be same. (sent:%d label:%d)'%(len(sentData),len(labelData)))
-        exit()
+    for ty in ['train','valid','test']:
+        sp = sentDataPath%ty
+        lp = labelDataPath%ty
+        if not os.path.exists(sp) or not os.path.exists(lp):
+            continue
+        
+        sentData = [line.strip() for line in open(sp)]
+        labelData = [line.strip() for line in open(lp)]
 
-    data = []
-    for s,l in zip(sentData, labelData):
-        line = {'text':s, 'label':l}
+        if len(sentData) != len(labelData):        
+            print('sizes of sentences and labels must be same. (sent:%d label:%d)'%(len(sentData),len(labelData)))
+            print('sentDataPath: %s'%sp)
+            print('labelDataPath: %s'%lp)
+            exit()
+
+        tyData = []
+        for s,l in zip(sentData, labelData):
+            tyData.append({'text':s,'label':l})
+
+        data[ty] = tyData
+
+    with open(outPath,'w') as f:
+        json.dump(data, f)
