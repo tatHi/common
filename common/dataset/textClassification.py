@@ -4,6 +4,7 @@ class Dataset4TextClassification(dataset.Dataset):
         super().__init__(path)
         self.labels = []
         self.labelSize = None
+        self.label2index = {}
         self.__setLabelInfo()
 
     def __setLabelInfo(self):
@@ -14,7 +15,14 @@ class Dataset4TextClassification(dataset.Dataset):
         self.labels = sorted(list(labels))
         self.labelSize = len(labels)
 
-def convertSentLabelFiles(sentDataPath, labelDataPath, outPath):
+        # re-index labels because line['label'] may be string
+        for label in self.labels:
+            self.label2index[label] = len(self.label2index)
+        for ty in self.data:
+            for line in self.data[ty]:
+                line['label'] = self.label2index[label]
+
+def convertSentLabelFiles(sentDataPath, labelDataPath, outPath, splited=False):
     import os
     import json
     # convert 2 files (sentences.txt and labels.txt) into dataset-formatted file.json
@@ -28,7 +36,9 @@ def convertSentLabelFiles(sentDataPath, labelDataPath, outPath):
     for ty in ['train','valid','test']:
         sp = sentDataPath%ty
         lp = labelDataPath%ty
+        
         if not os.path.exists(sp) or not os.path.exists(lp):
+            print('pass %s'%ty)
             continue
         
         sentData = [line.strip() for line in open(sp)]
@@ -39,12 +49,22 @@ def convertSentLabelFiles(sentDataPath, labelDataPath, outPath):
             print('sentDataPath: %s'%sp)
             print('labelDataPath: %s'%lp)
             exit()
-
+        
+        print('train:')
+        print('\t%s(%d)'%(sp,len(sentData)))
+        print('\t%s(%d)'%(lp,len(labelData)))
+    
         tyData = []
         for s,l in zip(sentData, labelData):
-            tyData.append({'text':s,'label':l})
+            if splited:
+                s = s.split()
+            tyData.append({'text':s,
+                           'label':l})
 
         data[ty] = tyData
 
-    with open(outPath,'w') as f:
-        json.dump(data, f)
+    if data:
+        with open(outPath,'w') as f:
+            json.dump(data, f)
+    else:
+        print('exit: no data is dumped')
