@@ -4,8 +4,10 @@ python3.
 ```
 $ git clone https://github.com/tathi/common
 $ cd common
-$ python setup.py develop
+$ python setup.py develop --user
 ```
+`--user`は権限ユーザーなら不要。  
+
 
 MeCabを入れるのが面倒な環境なら、setup.pyの以下から`mecab-python3`を削除する。
 ```
