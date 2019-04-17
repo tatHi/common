@@ -1,7 +1,7 @@
 from common.dataset import dataset
 class Dataset4TextClassification(dataset.Dataset):
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, useBEOS=False):
+        super().__init__(path, useBEOS)
         self.labels = []
         self.labelSize = None
         self.label2index = {}
@@ -12,15 +12,14 @@ class Dataset4TextClassification(dataset.Dataset):
         for ty in self.data:
             for line in self.data[ty]:
                 labels.add(line['label'])
-        self.labels = sorted(list(labels))
+        self.labels = sorted(list(labels)) # sorted
         self.labelSize = len(labels)
 
         # re-index labels because line['label'] may be string
-        for label in self.labels:
-            self.label2index[label] = len(self.label2index)
+        self.label2index = {label:i for i,label in enumerate(self.labels)}
         for ty in self.data:
             for line in self.data[ty]:
-                line['label'] = self.label2index[label]
+                line['label'] = self.label2index[line['label']]
 
 def convertSentLabelFiles(sentDataPath, labelDataPath, outPath, splited=False):
     import os

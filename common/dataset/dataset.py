@@ -24,7 +24,10 @@ class Dataset:
         note that this is not return data itself.
         '''
         assert dataType in self.data, 'dataType is not in keys('+list(self.data.keys())+')'
-        indices = np.random.permutation(len(self.data[dataType])) 
+        if shuffle:
+            indices = np.random.permutation(len(self.data[dataType])) 
+        else:
+            indices = np.arange(len(self.data[dataType]))
         miniBatchIdx = pack(indices, batchSize)
         return miniBatchIdx
 
