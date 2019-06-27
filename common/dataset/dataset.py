@@ -18,7 +18,7 @@ class Dataset:
                     idLine = [self.vocab.word2id('<BOS>')] + idLine + [self.vocab.word2id('<EOS>')]
                 self.idData[dt].append(idLine)
 
-    def makeMiniBatchIdx(self, dataType, batchSize, shuffle=False):
+    def makeMiniBatchIdx(self, dataType, batchSize, shuffle=False, lengthOrder=False):
         '''
         return indices for minibatch.
         note that this is not return data itself.
@@ -29,15 +29,25 @@ class Dataset:
         else:
             indices = np.arange(len(self.data[dataType]))
         miniBatchIdx = pack(indices, batchSize)
+
+        if lengthOrder:
+            miniBatchIdx = [self.sortByUnitLength(batch, dataType) for batch in miniBatchIdx]
         return miniBatchIdx
+
+    def sortByUnitLength(self, batch, dataType):
+        neoBatch = [b for b in sorted(batch, key=lambda x:len(self.idData[dataType][x]))[::-1]]
+        return neoBatch
 
 def pack(arr, size):
     batch = [arr[i:i+size] for i in range(0, len(arr), size)]
     return batch
 
 def test():
-    path = '/Users/tatsuya-h/work/data/twitter_en_text.json'
-    ds = Dataset(path, True)
+    import sys
+    path = sys.argv[1]
+    ds = Dataset(path, False)
+    ds.makeMiniBatchIdx('train',4,False,True)
 
 if __name__ == '__main__':
     test()
+
