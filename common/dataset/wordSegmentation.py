@@ -16,6 +16,14 @@ class Dataset4WordSegmentation(dataset.Dataset):
             exit()
         
         super().__init__(path, useBEOS)
-        
+
+        # check
+        for ty in self.data:
+            for line in self.data[ty]:
+                if len(line['text']) != sum(line['label']):
+                    print(line['text'])
+                    print(line['label'])
+                    exit()
+
         if labelType=='length':
             self.maxLength = max([l for line in self.data['train'] for l in line['label']])
