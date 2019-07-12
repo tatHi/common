@@ -1,7 +1,7 @@
 from common.dataset import dataset
 class Dataset4TextClassification(dataset.Dataset):
-    def __init__(self, path, useBEOS=False):
-        super().__init__(path, useBEOS)
+    def __init__(self, path, useBEOS=False, charMode=False):
+        super().__init__(path, useBEOS, charMode)
         self.labels = []
         self.labelSize = None
         self.label2index = {}
