@@ -3,19 +3,36 @@ import numpy as np
 from common.dataset import vocab
 
 class Dataset:
-    def __init__(self, path, useBEOS=False):
-        self.data = json.load(open(path))
-        self.vocab = vocab.Vocabulary(self.data['train'], useBEOS)
-        self.__buildDataset(useBEOS)
+    def __init__(self, path, useBEOS=False, charMode=False):
+        '''
+        useBEOS=True -> BOS t t t EOS
+        charMode=True -> express a word as a sequence of characters like ['l','i','k','e']
+        '''
 
-    def __buildDataset(self, useBEOS):
+        self.data = json.load(open(path))
+        self.vocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=False)
+        
+        self.charMode = charMode
+        if charMode:
+            self.charVocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=True)
+        
+        self.__buildDataset(useBEOS, charMode)
+
+    def __buildDataset(self, useBEOS, charMode):
         self.idData = {}
         for dt in self.data:
             self.idData[dt] = []
             for line in self.data[dt]:
-                idLine = self.vocab.words2ids(line['text'])
+                if charMode:
+                    idLine = [self.charVocab.words2ids(word) for word in line['text']]
+                else:
+                    idLine = self.vocab.words2ids(line['text'])
+                
                 if useBEOS:
-                    idLine = [self.vocab.word2id('<BOS>')] + idLine + [self.vocab.word2id('<EOS>')]
+                    if charMode:
+                        idLine = [[self.vocab.word2id('<BOS>')]] + idLine + [[self.vocab.word2id('<EOS>')]]
+                    else:
+                        idLine = [self.vocab.word2id('<BOS>')] + idLine + [self.vocab.word2id('<EOS>')]
                 self.idData[dt].append(idLine)
 
     def makeMiniBatchIdx(self, dataType, batchSize, shuffle=False, lengthOrder=False):
@@ -45,8 +62,9 @@ def pack(arr, size):
 def test():
     import sys
     path = sys.argv[1]
-    ds = Dataset(path, False)
-    ds.makeMiniBatchIdx('train',4,False,True)
+    ds = Dataset(path, True, True)
+    print(ds.idData['train'][0])
+    print(ds.data['train'][0]['text'])
 
 if __name__ == '__main__':
     test()

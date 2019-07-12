@@ -15,7 +15,7 @@ class Dataset4NER_span(dataset.Dataset):
                 labels |= set(line['label'])
 
         # normalize
-        labels = [label if label=='O' else label.split('-')[1] for label in labels]
+        labels = {label if label=='O' else label.split('-')[1] for label in labels}
         self.labels = sorted(list(labels)) # sort list for reproductivity
         self.labelSize = len(labels)
 
