@@ -3,7 +3,7 @@ from common.lm import ngram
 import numpy as np
 
 class Dataset4Word2Vec(dataset.Dataset):
-    def __init__(self, path, mode, windowSize=2,vocab=None):
+    def __init__(self, path, mode, windowSize=2,initVocab=None):
         if mode not in ['CBOW', 'SG']:
             print('Word2VecDataset\'s mode must be CBOW or SG')
             exit()
