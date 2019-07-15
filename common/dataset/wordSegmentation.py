@@ -10,12 +10,12 @@ train:
 
 from common.dataset import dataset
 class Dataset4WordSegmentation(dataset.Dataset):
-    def __init__(self, path, labelType='length', useBEOS=False):
+    def __init__(self, path, labelType='length', useBEOS=False, vocab=None):
         if labelType not in ['length','01']:
             print('labelType should be length or 01')
             exit()
         
-        super().__init__(path, useBEOS)
+        super().__init__(path, useBEOS=useBEOS, vocab=vocab)
 
         # check
         for ty in self.data:

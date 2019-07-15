@@ -1,7 +1,7 @@
 from common.dataset import dataset
 class Dataset4NER_span(dataset.Dataset):
-    def __init__(self, path, useBEOS=False, charMode=False, maxLength=3):
-        super().__init__(path, useBEOS, charMode)
+    def __init__(self, path, useBEOS=False, charMode=False, maxLength=3, vocab=None):
+        super().__init__(path, useBEOS, charMode, vocab)
         self.maxLength = maxLength
         self.labels = []
         self.labelSize = None

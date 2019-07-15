@@ -3,15 +3,18 @@ import numpy as np
 from common.dataset import vocab
 
 class Dataset:
-    def __init__(self, path, useBEOS=False, charMode=False):
+    def __init__(self, path, useBEOS=False, charMode=False, initVocab=None):
         '''
         useBEOS=True -> BOS t t t EOS
         charMode=True -> express a word as a sequence of characters like ['l','i','k','e']
         '''
 
         self.data = json.load(open(path))
-        self.vocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=False)
-        
+        if initVocab is None:
+            self.vocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=False)
+        else:
+            self.vocab = initVocab
+
         self.charMode = charMode
         if charMode:
             self.charVocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=True)

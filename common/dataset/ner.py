@@ -1,7 +1,7 @@
 from common.dataset import dataset
 class Dataset4NER(dataset.Dataset):
-    def __init__(self, path, useBEOS=False, charMode=False):
-        super().__init__(path, useBEOS, charMode)
+    def __init__(self, path, useBEOS=False, charMode=False, vocab=None):
+        super().__init__(path, useBEOS, charMode, vocab)
         self.labels = []
         self.labelSize = None
         self.label2index = {}
