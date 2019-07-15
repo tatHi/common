@@ -1,4 +1,4 @@
-import dataset
+from common.dataset import dataset
 from common.lm import ngram
 import numpy as np
 
