@@ -39,7 +39,7 @@ class Vocabulary:
         # vocab size
         self.vocabSize = len(self.word2idDict)
 
-    def addWord(word, updateVocabSize=True):
+    def addWord(self, word, updateVocabSize=True):
         self.word2idDict[word] = len(self.word2idDict)
         self.id2wordDict[self.word2idDict[word]] = word
 
