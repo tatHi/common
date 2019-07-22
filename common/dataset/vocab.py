@@ -34,16 +34,17 @@ class Vocabulary:
 
         # indexing
         for word, num in sorted(self.wordCountDict.items(), key=lambda x:x[1])[::-1]:
-            self.addWord(word)
+            self.addWord(word, updateVocabSize=False)
 
         # vocab size
         self.vocabSize = len(self.word2idDict)
 
-    def addWord(word):
+    def addWord(word, updateVocabSize=True):
         self.word2idDict[word] = len(self.word2idDict)
         self.id2wordDict[self.word2idDict[word]] = word
 
-        self.vocabSize = len(self.word2idDict)
+        if updateVocabSize:
+            self.vocabSize = len(self.word2idDict)
 
     def word2id(self, word):
         if word in self.word2idDict:
