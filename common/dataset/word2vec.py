@@ -11,7 +11,7 @@ class Dataset4Word2Vec(dataset.Dataset):
         self.mode = mode
         self.windowSize = windowSize
         
-        super().__init__(path, useBEOS=True, charMode=False, initVocab=vocab)
+        super().__init__(path, useBEOS=True, charMode=False, initVocab=initVocab)
 
         # discard datasets other than train-set
         self.idData = self.idData['train']
