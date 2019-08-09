@@ -58,6 +58,18 @@ class Dataset:
         neoBatch = [b for b in sorted(batch, key=lambda x:len(self.idData[dataType][x]))[::-1]]
         return neoBatch
 
+def makeDatasetJSON(pathDict, saveName):
+    '''
+    pathDict = {'train':'/path',
+                'test':'/path'}
+    split sentence and pack them as json
+    '''
+    data = {key:[{'text':line.strip().split()} for line in open(pathDict[key])] for key in pathDict}
+    with open(saveName, 'w') as f:
+        json.dump(data, f, ensure_ascii=False)
+
+    print('dump as json successfully')
+
 def pack(arr, size):
     batch = [arr[i:i+size] for i in range(0, len(arr), size)]
     return batch
