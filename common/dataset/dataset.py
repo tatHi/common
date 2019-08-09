@@ -3,13 +3,17 @@ import numpy as np
 from common.dataset import vocab
 
 class Dataset:
-    def __init__(self, path, useBEOS=False, charMode=False, initVocab=None):
+    def __init__(self, path, useBEOS=False, charMode=False, initVocab=None, lengthOrder=False):
         '''
         useBEOS=True -> BOS t t t EOS
         charMode=True -> express a word as a sequence of characters like ['l','i','k','e']
         '''
 
         self.data = json.load(open(path))
+
+        if lengthOrder:
+            self.data = {k:[line for line in sorted(v, key=lambda x:len(x['text']), reverse=True)] for k,v in self.data.items()}
+
         if initVocab is None:
             self.vocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=False)
         else:
@@ -42,6 +46,8 @@ class Dataset:
         '''
         return indices for minibatch.
         note that this is not return data itself.
+
+        lengthOrder: sort by their length in batch
         '''
         assert dataType in self.data, 'dataType is not in keys('+list(self.data.keys())+')'
         if shuffle:
@@ -77,7 +83,7 @@ def pack(arr, size):
 def test():
     import sys
     path = sys.argv[1]
-    ds = Dataset(path, True, True)
+    ds = Dataset(path, lengthOrder=True)
     print(ds.idData['train'][0])
     print(ds.data['train'][0]['text'])
 
