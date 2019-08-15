@@ -15,7 +15,7 @@ class Dataset:
             self.data = {k:[line for line in sorted(v, key=lambda x:len(x['text']), reverse=True)] for k,v in self.data.items()}
 
         if initVocab is None:
-            self.vocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=False)
+            self.vocab = vocab.Vocabulary(self.data['train'], noUNK, useBEOS, charMode=False)
         else:
             self.vocab = initVocab
 
