@@ -1,5 +1,5 @@
 class Vocabulary:
-    def __init__(self, data, useBEOS, noUNK=False, charMode=False):
+    def __init__(self, data, noUNK=False, useBEOS=False, charMode=False):
         self.word2idDict = {}
         self.id2wordDict = {}
         self.wordCountDict = {}
