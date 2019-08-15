@@ -1,12 +1,12 @@
 class Vocabulary:
-    def __init__(self, data, useBEOS, charMode=False):
+    def __init__(self, data, useBEOS, noUNK=False, charMode=False):
         self.word2idDict = {}
         self.id2wordDict = {}
         self.wordCountDict = {}
         self.wordNum = 0
-        self.__buildVocabulary(data, useBEOS, charMode) # dataset.Dataset.data['train']
+        self.__buildVocabulary(data, noUNK, useBEOS, charMode) # dataset.Dataset.data['train']
 
-    def __buildVocabulary(self, data, useBEOS, charMode):
+    def __buildVocabulary(self, data, noUNK, useBEOS, charMode):
         # count
         for line in data:
             text = line['text']
@@ -22,9 +22,10 @@ class Vocabulary:
                     self.wordCountDict[word] = 1
                 self.wordNum += 1
 
-        # UNK
-        self.wordCountDict['<UNK>'] = 1
-        self.wordNum += 1
+        if not noUNK:
+            # UNK
+            self.wordCountDict['<UNK>'] = 1
+            self.wordNum += 1
 
         # BOS, EOS
         if useBEOS:
