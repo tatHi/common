@@ -15,13 +15,13 @@ class Dataset:
             self.data = {k:[line for line in sorted(v, key=lambda x:len(x['text']), reverse=True)] for k,v in self.data.items()}
 
         if initVocab is None:
-            self.vocab = vocab.Vocabulary(self.data['train'], noUNK, useBEOS, charMode=False)
+            self.vocab = vocab.Vocabulary(self.data['train'], noUNK=noUNK, useBEOS=useBEOS, charMode=False)
         else:
             self.vocab = initVocab
 
         self.charMode = charMode
         if charMode:
-            self.charVocab = vocab.Vocabulary(self.data['train'], useBEOS, charMode=True)
+            self.charVocab = vocab.Vocabulary(self.data['train'], noUNK=noUNK, useBEOS=useBEOS, charMode=True)
         
         self.__buildDataset(useBEOS, charMode)
 
@@ -42,7 +42,7 @@ class Dataset:
                         idLine = [self.vocab.word2id('<BOS>')] + idLine + [self.vocab.word2id('<EOS>')]
                 self.idData[dt].append(idLine)
 
-    def makeMiniBatchIdx(self, dataType, batchSize, shuffle=False, lengthOrder=False):
+    def makeMiniBatchIdx(self, dataType, batchSize, shuffle=False, lengthOrder=False, lengthLimit=-1):
         '''
         return indices for minibatch.
         note that this is not return data itself.
@@ -50,10 +50,16 @@ class Dataset:
         lengthOrder: sort by their length in batch
         '''
         assert dataType in self.data, 'dataType is not in keys('+list(self.data.keys())+')'
+        
+        # shuffle
         if shuffle:
             indices = np.random.permutation(len(self.data[dataType])) 
         else:
             indices = np.arange(len(self.data[dataType]))
+
+        # cut long training data
+        if 0<=lengthLimit:
+            indices = [idx for idx in indices if len(self.data[dataType][idx]['text'])<=lengthLimit]
         miniBatchIdx = pack(indices, batchSize)
 
         if lengthOrder:
@@ -86,6 +92,8 @@ def test():
     ds = Dataset(path, lengthOrder=True)
     print(ds.idData['train'][0])
     print(ds.data['train'][0]['text'])
+
+    ds.makeMiniBatchIdx('train', 32, shuffle=False, lengthOrder=False, lengthLimit=20)
 
 if __name__ == '__main__':
     test()
