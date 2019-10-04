@@ -3,7 +3,7 @@ import numpy as np
 from common.dataset import vocab
 
 class Dataset:
-    def __init__(self, path, useBEOS=False, charMode=False, noUNK=False, initVocab=None, lengthOrder=False):
+    def __init__(self, path, useBEOS=False, useCharVocab=False, charMode=False, noUNK=False, initVocab=None, lengthOrder=False):
         '''
         useBEOS=True -> BOS t t t EOS
         charMode=True -> express a word as a sequence of characters like ['l','i','k','e']
@@ -20,7 +20,8 @@ class Dataset:
             self.vocab = initVocab
 
         self.charMode = charMode
-        if charMode:
+        self.useCharVocab = charMode or useCharVocab
+        if self.useCharVocab:
             self.charVocab = vocab.Vocabulary(self.data['train'], noUNK=noUNK, useBEOS=useBEOS, charMode=True)
         
         self.__buildDataset(useBEOS, charMode)
