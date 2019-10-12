@@ -61,6 +61,7 @@ class Dataset:
         # cut long training data
         if 0<=lengthLimit:
             indices = [idx for idx in indices if len(self.data[dataType][idx]['text'])<=lengthLimit]
+
         miniBatchIdx = pack(indices, batchSize)
 
         if lengthOrder:
@@ -70,6 +71,14 @@ class Dataset:
     def sortByUnitLength(self, batch, dataType):
         neoBatch = [b for b in sorted(batch, key=lambda x:len(self.idData[dataType][x]))[::-1]]
         return neoBatch
+
+    def unkDropout(self, dataType, idx, rate):
+        idLine = self.idData[dataType][idx]
+        mask = np.random.choice(2, len(idLine), p=[rate, 1-rate])
+        idLine = idLine * mask
+        idLine = idLine + np.logical_not(mask)*self.vocab.word2idDict['<UNK>']
+
+        return idLine
 
 def makeDatasetJSON(pathDict, saveName):
     '''
@@ -91,10 +100,9 @@ def test():
     import sys
     path = sys.argv[1]
     ds = Dataset(path, lengthOrder=True)
-    print(ds.idData['train'][0])
-    print(ds.data['train'][0]['text'])
 
-    ds.makeMiniBatchIdx('train', 32, shuffle=False, lengthOrder=False, lengthLimit=20)
+    #ds.makeMiniBatchIdx('train', 32, shuffle=False, lengthOrder=False, lengthLimit=20)
+    ds.unkDropout('train', 99, 0.3)
 
 if __name__ == '__main__':
     test()
